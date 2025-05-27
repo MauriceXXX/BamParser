@@ -18,7 +18,7 @@ function Get-Bam {
             New-PSDrive -Name HKLM -PSProvider Registry -Root HKEY_LOCAL_MACHINE
         }
         catch {
-            Write-Warning "Fehler beim Mounten von HKLM"
+            Write-Warning "Error Mounting HKLM"
         }
     }
 
@@ -63,8 +63,8 @@ function Get-Bam {
                             $signature = Get-AuthenticodeSignature -FilePath $appPath
                             if ($signature.Status -ne "Valid") {
                                 switch ($signature.Status) {
-                                    "NotSigned" { $status = "Unsigned"; $color = "Yellow" }
-                                    default { $status = "$($signature.Status)"; $color = "Red" }
+                                    "NotSigned" { $status = "Unsigned"; $color = "Red" }
+                                    default { $status = "$($signature.Status)"; $color = "DarkRed" }
                                 }
                                 $results += [PSCustomObject]@{
                                     Status    = $status
@@ -94,15 +94,12 @@ function Get-Bam {
     }
 
 
-    Write-Host ("{0,-15}  {1,-19}  {2,-70}" -f "Status", "Timestamp", "Path") -ForegroundColor Cyan
+    Write-Host ("{0,-15}  {1,-19}  {2,-70}" -f "Status", "Timestamp", "Path") -ForegroundColor Blue
     Write-Host ("{0,-15}  {1,-19}  {2,-70}" -f ("-" * 15), ("-" * 19), ("-" * 70))
 
     foreach ($entry in $results) {
         Write-Host ("{0,-15}  {1,-19}  {2,-70}" -f $entry.Status, $entry.Timestamp, $entry.Path) -ForegroundColor $entry.Color
     }
-
-
-
 }
 
 Get-Bam
